@@ -1,38 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio Semantic Search</title>
-    
+
     <!-- Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-
+    -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/12.0.2/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
     <style>
-        :root { --bg-color: #0d1117; --sidebar-bg: #161b22; --text-color: #c9d1d9; --border-color: #30363d; --user-bg: #21262d; --accent-color: #58a6ff; --thought-bg: #0d1117; --folder-header-bg: #2b313a; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        
+        :root {
+            --bg-color: #0d1117;
+            --sidebar-bg: #161b22;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --user-bg: #21262d;
+            --accent-color: #58a6ff;
+            --thought-bg: #0d1117;
+            --folder-header-bg: #2b313a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
         /* HEADER */
-        header { background: #161b22; border-bottom: 1px solid #30363d; padding: 15px; display: flex; flex-direction: column; gap: 12px; align-items: center; flex-shrink: 0; }
-        .header-controls { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn-file { background: var(--user-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; position: relative; overflow: hidden; }
-        .btn-file input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-        
+        header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-file {
+            background: var(--user-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-file input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
         /* SEARCH */
-        .search-container { display: flex; gap: 8px; width: 100%; max-width: 600px; }
-        #searchInput { flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: #0d1117; color: white; }
-        #btnSearch { background: var(--accent-color); color: #0d1117; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        
+        .search-container {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: #0d1117;
+            color: white;
+        }
+
+        #btnSearch {
+            background: var(--accent-color);
+            color: #0d1117;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         /* LAYOUT */
-        #container { display: flex; flex: 1; overflow: hidden; flex-direction: row; }
-        #sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-        #chat-area { flex: 1; padding: 0; overflow-y: auto; display: flex; flex-direction: column; }
-        
+        #container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: row;
+        }
+
+        #sidebar {
+            width: 320px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        #chat-area {
+            flex: 1;
+            padding: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
         /* DEBUG PANEL */
         #debug-panel {
             height: 200px;
@@ -44,523 +145,644 @@
             font-size: 12px;
             color: #0f0;
             flex-shrink: 0;
-            display: none !important; 
+            display: none !important;
         }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 2px; }
-        .log-score { color: #fff; font-weight: bold; }
-        .log-text { color: #888; font-style: italic; }
 
-    /* ... existing styles ... */
+        .log-entry {
+            margin-bottom: 4px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2px;
+        }
 
-    /* UPDATED FOLDER STYLES */
-    .folder-group { border-bottom: 1px solid var(--border-color); }
+        .log-score {
+            color: #fff;
+            font-weight: bold;
+        }
 
-    .folder-name {
-        padding: 8px 12px;
-        background-color: var(--folder-header-bg);
-        font-weight: bold;
-        font-size: 0.85rem;
-        position: sticky;
-        top: 0;
-        cursor: pointer;          /* Add cursor pointer */
-        user-select: none;        /* Prevent text selection on double click */
-        display: flex;            /* Flexbox for arrow alignment */
-        justify-content: space-between;
-        align-items: center;
-        z-index: 5;
-    }
+        .log-text {
+            color: #888;
+            font-style: italic;
+        }
 
-    .folder-name:hover {
-        background-color: #363d46;
-    }
+        /* ... existing styles ... */
 
-    /* Arrow icon using CSS pseudo-element */
-    .folder-name::after {
-        content: '▼';
-        font-size: 10px;
-        transition: transform 0.2s ease;
-        margin-left: 10px;
-        color: #8b949e;
-    }
+        /* UPDATED FOLDER STYLES */
+        .folder-group {
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    /* Collapsed state styling */
-    .folder-group.collapsed .folder-name::after {
-        transform: rotate(-90deg);
-    }
+        .folder-name {
+            padding: 8px 12px;
+            background-color: var(--folder-header-bg);
+            font-weight: bold;
+            font-size: 0.85rem;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            /* Add cursor pointer */
+            user-select: none;
+            /* Prevent text selection on double click */
+            display: flex;
+            /* Flexbox for arrow alignment */
+            justify-content: space-between;
+            align-items: center;
+            z-index: 5;
+        }
 
-    .file-list {
-        display: block; /* Default visible */
-    }
+        .folder-name:hover {
+            background-color: #363d46;
+        }
 
-    .folder-group.collapsed .file-list {
-        display: none; /* Hidden when collapsed */
-    }
+        /* Arrow icon using CSS pseudo-element */
+        .folder-name::after {
+            content: '▼';
+            font-size: 10px;
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+            color: #8b949e;
+        }
 
-    /* ... rest of styles ... */
-        .file-item { padding: 10px 16px; cursor: pointer; font-size: 13px; color: #8b949e; display: flex; justify-content: space-between; }
-        .file-item:hover { background-color: #21262d; color: white; }
-        .file-item.active { background-color: #21262d; border-left: 3px solid var(--accent-color); }
-        .file-item.matched { background-color: rgba(46, 160, 67, 0.15); color: #e6edf3; }
-        .match-score { font-size: 10px; background: #238636; color: white; padding: 2px 6px; border-radius: 10px; }
+        /* Collapsed state styling */
+        .folder-group.collapsed .folder-name::after {
+            transform: rotate(-90deg);
+        }
+
+        .file-list {
+            display: block;
+            /* Default visible */
+        }
+
+        .folder-group.collapsed .file-list {
+            display: none;
+            /* Hidden when collapsed */
+        }
+
+        /* ... rest of styles ... */
+        .file-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #8b949e;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .file-item:hover {
+            background-color: #21262d;
+            color: white;
+        }
+
+        .file-item.active {
+            background-color: #21262d;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .file-item.matched {
+            background-color: rgba(46, 160, 67, 0.15);
+            color: #e6edf3;
+        }
+
+        .match-score {
+            font-size: 10px;
+            background: #238636;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
 
         /* CHAT STYLES */
-        .conversation-wrapper { margin-bottom: 50px; border-bottom: 2px dashed var(--border-color); }
-        .conversation-header { padding: 15px 40px; background: #1f242c; font-weight: bold; border-bottom: 1px solid var(--border-color); }
-        .message-row { padding: 24px 40px; border-bottom: 1px solid var(--border-color); }
-        .message-row.user { background-color: var(--user-bg); }
-        .role-label { font-size: 12px; font-weight: 600; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; }
-        .content { font-size: 16px; line-height: 1.6; max-width: 900px; }
-        .content p { margin-top: 0; margin-bottom: 16px; }
-        .content pre { background-color: #161b22; padding: 16px; border-radius: 6px; overflow-x: auto; }
-        
-        #loading { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; color: white; z-index: 999; }
-#progress-container {
-    width: 100%;
-    max-width: 600px;
-    height: 6px;
-    background: #21262d; /* Darker track */
-    border-radius: 3px;
-    margin-top: 10px;
-    overflow: hidden;
-    display: none; /* Hidden by default */
-    border: 1px solid var(--border-color);
-}
+        .conversation-wrapper {
+            margin-bottom: 50px;
+            border-bottom: 2px dashed var(--border-color);
+        }
 
-#progress-bar {
-    height: 100%;
-    background-color: var(--accent-color); /* Blue/Accent color */
-    width: 0%;
-    transition: width 0.1s linear;
-    box-shadow: 0 0 10px var(--accent-color); /* Glow effect */
-}
+        .conversation-header {
+            padding: 15px 40px;
+            background: #1f242c;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .message-row {
+            padding: 24px 40px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .message-row.user {
+            background-color: var(--user-bg);
+        }
+
+        .role-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8b949e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .content {
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 900px;
+        }
+
+        .content p {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .content pre {
+            background-color: #161b22;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 999;
+        }
+
+        #progress-container {
+            width: 100%;
+            max-width: 600px;
+            height: 6px;
+            background: #21262d;
+            /* Darker track */
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
+            /* Hidden by default */
+            border: 1px solid var(--border-color);
+        }
+
+        #progress-bar {
+            height: 100%;
+            background-color: var(--accent-color);
+            /* Blue/Accent color */
+            width: 0%;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--accent-color);
+            /* Glow effect */
+        }
     </style>
 </head>
+
 <body>
 
-<header>
-    <h3>AI Studio Semantic Search</h3>
-    <div class="header-controls">
-        <label class="btn-file">Add Files <input type="file" id="fileInput" accept=".json" multiple></label>
-        <label class="btn-file">Add Folder <input type="file" id="folderInput" webkitdirectory directory multiple></label>
+    <header>
+        <h3>AI Studio Semantic Search</h3>
+        <div class="header-controls">
+            <label class="btn-file">Add Files <input type="file" id="fileInput" accept=".json" multiple></label>
+            <label class="btn-file">Add Folder <input type="file" id="folderInput" webkitdirectory directory
+                    multiple></label>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search..." disabled>
+            <button id="btnSearch" disabled>Find with AI</button>
+        </div>
+
+        <!-- Add these two lines: -->
+        <div id="searchStatus">Load files to begin</div>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </header>
+
+    <div id="loading">
+        <div id="loadingText">Processing...</div>
     </div>
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search..." disabled>
-        <button id="btnSearch" disabled>Find with AI</button>
+
+    <div id="container">
+        <div id="sidebar">
+            <div style="padding:20px; text-align:center; color:#666;">No files</div>
+        </div>
+        <div id="chat-area">
+            <div style="padding: 40px; text-align: center; color: #666;">Load files to start</div>
+        </div>
     </div>
 
-<!-- Add these two lines: -->
-<div id="searchStatus">Load files to begin</div>
-<div id="progress-container"><div id="progress-bar"></div></div>
-</header>
+    <div id="debug-panel">
+        <div><strong>--- DEBUG LOG ---</strong></div>
+        <div id="debug-content"></div>
+    </div>
 
-<div id="loading"><div id="loadingText">Processing...</div></div>
+    <script type="module">
+        const fastWait = () => new Promise(resolve => {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = () => resolve();
+            channel.port2.postMessage(null);
+        });
+        //import { AutoTokenizer, AutoModelForSequenceClassification, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0';
+        //import { AutoTokenizer, AutoModelForSequenceClassification, env } from 'https://cdn.jsdmirror.com/npm/@xenova/transformers@2.17.0';
+        import { AutoTokenizer, AutoModelForSequenceClassification, env }
+            from 'https://esm.sh/@xenova/transformers@2.17.0';
+        // Configure Transformers.js for corporate network (jsdelivr is blocked)
+        // 1. Redirect WASM fetches to BootCDN (compatible with version 1.14.0 used by Transformers.js 2.17.0)
+        env.backends.onnx.wasm.wasmPaths = 'https://cdn.bootcdn.net/ajax/libs/onnxruntime-web/1.14.0/';
 
-<div id="container">
-    <div id="sidebar"><div style="padding:20px; text-align:center; color:#666;">No files</div></div>
-    <div id="chat-area"><div style="padding: 40px; text-align: center; color: #666;">Load files to start</div></div>
-</div>
+        // 2. Redirect model fetches to Hugging Face mirror
+        env.remoteHost = 'https://hf-mirror.com';
+        env.allowLocalModels = false;
 
-<div id="debug-panel">
-    <div><strong>--- DEBUG LOG ---</strong></div>
-    <div id="debug-content"></div>
-</div>
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const folderInput = document.getElementById('folderInput');
+        const sidebar = document.getElementById('sidebar');
+        const chatArea = document.getElementById('chat-area');
+        const loading = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
+        const searchInput = document.getElementById('searchInput');
+        const btnSearch = document.getElementById('btnSearch');
+        const searchStatus = document.getElementById('searchStatus');
+        const debugPanel = document.getElementById('debug-panel');
+        const debugContent = document.getElementById('debug-content');
 
-<script type="module">
-	const fastWait = () => new Promise(resolve => {
-	    const channel = new MessageChannel();
-	    channel.port1.onmessage = () => resolve();
-	    channel.port2.postMessage(null);
-	});
-    import { AutoTokenizer, AutoModelForSequenceClassification, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.0';
-    env.allowLocalModels = false;
+        let loadedFiles = [];
+        let tokenizer = null;
+        let model = null;
+        //const MODEL_ID = 'Xenova/ms-marco-TinyBERT-L-2-v2';
+        const MODEL_ID = 'Xenova/ms-marco-MiniLM-L-6-v2';
 
-    // DOM Elements
-    const fileInput = document.getElementById('fileInput');
-    const folderInput = document.getElementById('folderInput');
-    const sidebar = document.getElementById('sidebar');
-    const chatArea = document.getElementById('chat-area');
-    const loading = document.getElementById('loading');
-    const loadingText = document.getElementById('loadingText');
-    const searchInput = document.getElementById('searchInput');
-    const btnSearch = document.getElementById('btnSearch');
-    const searchStatus = document.getElementById('searchStatus');
-    const debugPanel = document.getElementById('debug-panel');
-    const debugContent = document.getElementById('debug-content');
-    
-    let loadedFiles = [];
-    let tokenizer = null;
-    let model = null;
-    //const MODEL_ID = 'Xenova/ms-marco-TinyBERT-L-2-v2';
-    const MODEL_ID = 'Xenova/ms-marco-MiniLM-L-6-v2';
+        // SAFE LOGGING
+        function log(msg, score = null, text = null) {
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            let html = `<span>${msg}</span>`;
 
-    // SAFE LOGGING
-    function log(msg, score = null, text = null) {
-        const div = document.createElement('div');
-        div.className = 'log-entry';
-        let html = `<span>${msg}</span>`;
-        
-        if (typeof score === 'number') {
-            html += ` <span class="log-score">[Score: ${score.toFixed(4)}]</span>`;
-        } else if (score !== null) {
-            html += ` <span class="log-score">[Score: UNDEFINED]</span>`;
-        }
-        
-        if (text) {
-            html += `<br><span class="log-text">CTX: "${text.substring(0, 100)}..."</span>`;
-        }
-        div.innerHTML = html;
-        debugContent.appendChild(div);
-        debugPanel.scrollTop = debugPanel.scrollHeight;
-    }
-
-    // --- 1. FILE LOADING ---
-    async function handleFileSelection(files) {
-        if (files.length === 0) return;
-        loading.style.display = 'flex';
-        loadingText.innerText = `Adding ${files.length} files...`;
-        
-        try {
-            const startIdIndex = loadedFiles.length;
-            const filePromises = Array.from(files).map(async (file, idx) => {
-                let folder = "Root";
-                if (file.webkitRelativePath) {
-                    const parts = file.webkitRelativePath.split('/');
-                    if (parts.length > 1) folder = parts[parts.length - 2]; 
-                }
-                try {
-                    const text = await file.text();
-                    const json = JSON.parse(text);
-                    const chats = normalizeData(json);
-                    
-                    const fullText = chats.map(c => {
-                        return getMessages(c).map(m => getText(m).main).join(' ');
-                    }).join(' ');
-
-                    return {
-                        id: startIdIndex + idx,
-                        name: file.name,
-                        path: file.webkitRelativePath || file.name,
-                        folder: folder,
-                        chats: chats,
-                        fullText: fullText,
-                        error: false
-                    };
-                } catch (err) {
-                    return { id: startIdIndex + idx, name: file.name, folder: "Errors", error: true };
-                }
-            });
-
-            const newResults = await Promise.all(filePromises);
-            loadedFiles = loadedFiles.concat(newResults.filter(f => !f.error)).sort((a, b) => b.name.localeCompare(a.name));
-            
-            renderSidebar();
-            if (loadedFiles.length > 0) {
-                searchInput.disabled = false;
-                btnSearch.disabled = false;
-                searchStatus.innerText = `Loaded ${loadedFiles.length} files.`;
-            }
-        } catch(err) { alert("Error: " + err.message); }
-        loading.style.display = 'none';
-    }
-
-    fileInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value=''; });
-    folderInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value=''; });
-
-    const progressContainer = document.getElementById('progress-container');
-    const progressBar = document.getElementById('progress-bar');
-    // --- 2. SEARCH LOGIC ---
-    btnSearch.onclick = async () => {
-        const query = searchInput.value.trim();
-        if (!query) return;
-
-        btnSearch.disabled = true;
-        searchInput.disabled = true;
-        
-        // SHOW PROGRESS BAR
-        progressContainer.style.display = 'block';
-        progressBar.style.width = '0%';
-        
-        debugPanel.style.display = 'block';
-        debugContent.innerHTML = '';
-        log(`Starting search for: "${query}"`);
-
-        try {
-            if (!tokenizer) {
-                searchStatus.innerText = "Downloading Model...";
-                log("Downloading Model (this happens once)...");
-                tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID);
-                model = await AutoModelForSequenceClassification.from_pretrained(MODEL_ID);
-                log("Model Loaded.");
+            if (typeof score === 'number') {
+                html += ` <span class="log-score">[Score: ${score.toFixed(4)}]</span>`;
+            } else if (score !== null) {
+                html += ` <span class="log-score">[Score: UNDEFINED]</span>`;
             }
 
-            searchStatus.innerText = "Scanning...";
-            const matches = [];
+            if (text) {
+                html += `<br><span class="log-text">CTX: "${text.substring(0, 100)}..."</span>`;
+            }
+            div.innerHTML = html;
+            debugContent.appendChild(div);
+            debugPanel.scrollTop = debugPanel.scrollHeight;
+        }
 
-            // CHANGE: Use standard for-loop to track index 'i'
-	    let lastYield = performance.now();
-            for (let i = 0; i < loadedFiles.length; i++) {
-                const file = loadedFiles[i];
+        // --- 1. FILE LOADING ---
+        async function handleFileSelection(files) {
+            if (files.length === 0) return;
+            loading.style.display = 'flex';
+            loadingText.innerText = `Adding ${files.length} files...`;
 
-                // 1. Context Window
-                const bestWindow = findBestContextWindow(query, file.fullText, 2000);
-                
-                // 2. AI Score
-                try {
-                    const inputs = await tokenizer(query, { 
-                        text_pair: bestWindow, 
-                        padding: true, 
-                        truncation: true, 
-                        max_length: 512 
-                    });
-                   
-                    const output = await model(inputs);
-                    const tensor = output.logits || Object.values(output)[0];
+            try {
+                const startIdIndex = loadedFiles.length;
+                const filePromises = Array.from(files).map(async (file, idx) => {
+                    let folder = "Root";
+                    if (file.webkitRelativePath) {
+                        const parts = file.webkitRelativePath.split('/');
+                        if (parts.length > 1) folder = parts[parts.length - 2];
+                    }
+                    try {
+                        const text = await file.text();
+                        const json = JSON.parse(text);
+                        const chats = normalizeData(json);
 
-                    let relevantScore = -10;
-                    if (tensor && tensor.data && tensor.data.length > 0) {
-                        if (tensor.data.length === 1) {
-                            relevantScore = tensor.data[0];
-                        } else {
-                            relevantScore = tensor.data[1]; 
+                        const fullText = chats.map(c => {
+                            return getMessages(c).map(m => getText(m).main).join(' ');
+                        }).join(' ');
+
+                        return {
+                            id: startIdIndex + idx,
+                            name: file.name,
+                            path: file.webkitRelativePath || file.name,
+                            folder: folder,
+                            chats: chats,
+                            fullText: fullText,
+                            error: false
+                        };
+                    } catch (err) {
+                        return { id: startIdIndex + idx, name: file.name, folder: "Errors", error: true };
+                    }
+                });
+
+                const newResults = await Promise.all(filePromises);
+                loadedFiles = loadedFiles.concat(newResults.filter(f => !f.error)).sort((a, b) => b.name.localeCompare(a.name));
+
+                renderSidebar();
+                if (loadedFiles.length > 0) {
+                    searchInput.disabled = false;
+                    btnSearch.disabled = false;
+                    searchStatus.innerText = `Loaded ${loadedFiles.length} files.`;
+                }
+            } catch (err) { alert("Error: " + err.message); }
+            loading.style.display = 'none';
+        }
+
+        fileInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value = ''; });
+        folderInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value = ''; });
+
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        // --- 2. SEARCH LOGIC ---
+        btnSearch.onclick = async () => {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            btnSearch.disabled = true;
+            searchInput.disabled = true;
+
+            // SHOW PROGRESS BAR
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            debugPanel.style.display = 'block';
+            debugContent.innerHTML = '';
+            log(`Starting search for: "${query}"`);
+
+            try {
+                if (!tokenizer) {
+                    searchStatus.innerText = "Downloading Model...";
+                    log("Downloading Model (this happens once)...");
+                    tokenizer = await AutoTokenizer.from_pretrained(MODEL_ID);
+                    model = await AutoModelForSequenceClassification.from_pretrained(MODEL_ID);
+                    log("Model Loaded.");
+                }
+
+                searchStatus.innerText = "Scanning...";
+                const matches = [];
+
+                // CHANGE: Use standard for-loop to track index 'i'
+                let lastYield = performance.now();
+                for (let i = 0; i < loadedFiles.length; i++) {
+                    const file = loadedFiles[i];
+
+                    // 1. Context Window
+                    const bestWindow = findBestContextWindow(query, file.fullText, 2000);
+
+                    // 2. AI Score
+                    try {
+                        const inputs = await tokenizer(query, {
+                            text_pair: bestWindow,
+                            padding: true,
+                            truncation: true,
+                            max_length: 512
+                        });
+
+                        const output = await model(inputs);
+                        const tensor = output.logits || Object.values(output)[0];
+
+                        let relevantScore = -10;
+                        if (tensor && tensor.data && tensor.data.length > 0) {
+                            if (tensor.data.length === 1) {
+                                relevantScore = tensor.data[0];
+                            } else {
+                                relevantScore = tensor.data[1];
+                            }
                         }
+
+                        log(`Analyzed: ${file.name}`, relevantScore, bestWindow);
+                        matches.push({ id: file.id, score: relevantScore });
+
+                    } catch (inner) {
+                        log(`ERROR on ${file.name}: ${inner.message}`);
                     }
 
-                    log(`Analyzed: ${file.name}`, relevantScore, bestWindow);
-                    matches.push({ id: file.id, score: relevantScore });
+                    // UPDATE PROGRESS BAR
+                    const percent = Math.round(((i + 1) / loadedFiles.length) * 100);
+                    progressBar.style.width = `${percent}%`;
+                    searchStatus.innerText = `Scanning... ${percent}% (${i + 1}/${loadedFiles.length})`;
 
-                } catch (inner) { 
-                    log(`ERROR on ${file.name}: ${inner.message}`);
+                    // Small delay to allow UI to render (optional, but helps visual smoothness)
+                    // await new Promise(r => setTimeout(r, 0));
+                    if (performance.now() - lastYield > 500) {
+                        await fastWait()
+                        lastYield = performance.now();
+                    }
                 }
 
-                // UPDATE PROGRESS BAR
-                const percent = Math.round(((i + 1) / loadedFiles.length) * 100);
-                progressBar.style.width = `${percent}%`;
-                searchStatus.innerText = `Scanning... ${percent}% (${i+1}/${loadedFiles.length})`;
-                
-                // Small delay to allow UI to render (optional, but helps visual smoothness)
-                // await new Promise(r => setTimeout(r, 0));
-		if (performance.now() - lastYield > 500) {
- 		     await fastWait()
-		     lastYield = performance.now();
-		}
-            }
-
-            matches.sort((a, b) => b.score - a.score);
-            let relevantMatches = matches.filter(m => m.score > -4);
-		if (relevantMatches.length < 3) {
-		  relevantMatches = matches.filter(m => m.score > -6.5);
-		}
-		searchStatus.innerText = `Done. Found ${relevantMatches.length} relevant matches.`;
-            renderSidebar(matches);
-
-        } catch (e) {
-            console.error(e);
-            log(`FATAL ERROR: ${e.message}`);
-            searchStatus.innerText = "Error during search.";
-        } finally {
-            btnSearch.disabled = false;
-            searchInput.disabled = false;
-            // Hide progress bar after 2 seconds
-            setTimeout(() => {
-                progressContainer.style.display = 'none';
-                progressBar.style.width = '0%';
-            }, 3000);
-        }
-    };
-
-
-    function findBestContextWindow(query, fullText, windowSize) {
-        if (!fullText) return "";
-        if (fullText.length <= windowSize) return fullText;
-
-        const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-        if (queryWords.length === 0) return fullText.substring(0, windowSize);
-
-        let bestScore = -1;
-        let bestOffset = 0;
-
-        for (let i = 0; i < fullText.length; i += 500) {
-            const chunk = fullText.substring(i, i + windowSize).toLowerCase();
-            let score = 0;
-            queryWords.forEach(w => { if (chunk.includes(w)) score++; });
-            
-            if (score > bestScore) {
-                bestScore = score;
-                bestOffset = i;
-            }
-        }
-        return fullText.substring(bestOffset, bestOffset + windowSize);
-    }
-
-// --- 3. RENDERING ---
-    function renderSidebar(matches = null) {
-        sidebar.innerHTML = '';
-        if (loadedFiles.length === 0) return;
-
-        // 1. Group files
-        const grouped = {};
-        loadedFiles.forEach(f => {
-            if (!grouped[f.folder]) grouped[f.folder] = [];
-            grouped[f.folder].push(f);
-        });
-
-        // 2. Calculate Min/Max ONLY for eligible scores (> -4)
-        let minScore = Infinity;
-        let maxScore = -Infinity;
-        let hasEligibleMatches = false;
-
-        if (matches && matches.length > 0) {
-            matches.forEach(m => {
-                // THRESHOLD CHECK: Only consider scores > -4 for the gradient range
-                if (m.score > -7) {
-                    if (m.score > maxScore) maxScore = m.score;
-                    if (m.score < minScore) minScore = m.score;
-                    hasEligibleMatches = true;
+                matches.sort((a, b) => b.score - a.score);
+                let relevantMatches = matches.filter(m => m.score > -4);
+                if (relevantMatches.length < 3) {
+                    relevantMatches = matches.filter(m => m.score > -6.5);
                 }
+                searchStatus.innerText = `Done. Found ${relevantMatches.length} relevant matches.`;
+                renderSidebar(matches);
+
+            } catch (e) {
+                console.error(e);
+                log(`FATAL ERROR: ${e.message}`);
+                searchStatus.innerText = "Error during search.";
+            } finally {
+                btnSearch.disabled = false;
+                searchInput.disabled = false;
+                // Hide progress bar after 2 seconds
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                }, 3000);
+            }
+        };
+
+
+        function findBestContextWindow(query, fullText, windowSize) {
+            if (!fullText) return "";
+            if (fullText.length <= windowSize) return fullText;
+
+            const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+            if (queryWords.length === 0) return fullText.substring(0, windowSize);
+
+            let bestScore = -1;
+            let bestOffset = 0;
+
+            for (let i = 0; i < fullText.length; i += 500) {
+                const chunk = fullText.substring(i, i + windowSize).toLowerCase();
+                let score = 0;
+                queryWords.forEach(w => { if (chunk.includes(w)) score++; });
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestOffset = i;
+                }
+            }
+            return fullText.substring(bestOffset, bestOffset + windowSize);
+        }
+
+        // --- 3. RENDERING ---
+        function renderSidebar(matches = null) {
+            sidebar.innerHTML = '';
+            if (loadedFiles.length === 0) return;
+
+            // 1. Group files
+            const grouped = {};
+            loadedFiles.forEach(f => {
+                if (!grouped[f.folder]) grouped[f.folder] = [];
+                grouped[f.folder].push(f);
             });
 
-            // Handle edge cases (single match or no eligible matches)
-            if (maxScore === minScore) minScore -= 1;
-            if (!hasEligibleMatches) { maxScore = 1; minScore = 0; }
-        }
+            // 2. Calculate Min/Max ONLY for eligible scores (> -4)
+            let minScore = Infinity;
+            let maxScore = -Infinity;
+            let hasEligibleMatches = false;
 
-        // Helper to interpolate colors
-        function getGradientColor(score) {
-            const ratio = Math.max(0, Math.min(1, (score - minScore) / (maxScore - minScore)));
+            if (matches && matches.length > 0) {
+                matches.forEach(m => {
+                    // THRESHOLD CHECK: Only consider scores > -4 for the gradient range
+                    if (m.score > -7) {
+                        if (m.score > maxScore) maxScore = m.score;
+                        if (m.score < minScore) minScore = m.score;
+                        hasEligibleMatches = true;
+                    }
+                });
 
-            const start = { r: 35, g: 134, b: 54 };   // Deep Green
-            const end = { r: 126, g: 231, b: 135 };   // Light Green
+                // Handle edge cases (single match or no eligible matches)
+                if (maxScore === minScore) minScore -= 1;
+                if (!hasEligibleMatches) { maxScore = 1; minScore = 0; }
+            }
 
-            const r = Math.round(start.r + (end.r - start.r) * ratio);
-            const g = Math.round(start.g + (end.g - start.g) * ratio);
-            const b = Math.round(start.b + (end.b - start.b) * ratio);
+            // Helper to interpolate colors
+            function getGradientColor(score) {
+                const ratio = Math.max(0, Math.min(1, (score - minScore) / (maxScore - minScore)));
 
-            return {
-                color: `rgb(${r}, ${g}, ${b})`,
-                bg: `rgba(${r}, ${g}, ${b}, 0.15)`
-            };
-        }
+                const start = { r: 35, g: 134, b: 54 };   // Deep Green
+                const end = { r: 126, g: 231, b: 135 };   // Light Green
 
-        Object.keys(grouped).sort().forEach(folderName => {
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'folder-group';
+                const r = Math.round(start.r + (end.r - start.r) * ratio);
+                const g = Math.round(start.g + (end.g - start.g) * ratio);
+                const b = Math.round(start.b + (end.b - start.b) * ratio);
 
-            const header = document.createElement('div');
-            header.className = 'folder-name';
-            header.innerText = `${folderName}`;
-            header.onclick = () => groupDiv.classList.toggle('collapsed');
-            groupDiv.appendChild(header);
+                return {
+                    color: `rgb(${r}, ${g}, ${b})`,
+                    bg: `rgba(${r}, ${g}, ${b}, 0.15)`
+                };
+            }
 
-            const fileListDiv = document.createElement('div');
-            fileListDiv.className = 'file-list';
+            Object.keys(grouped).sort().forEach(folderName => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'folder-group';
 
-            let visibleCount = 0;
+                const header = document.createElement('div');
+                header.className = 'folder-name';
+                header.innerText = `${folderName}`;
+                header.onclick = () => groupDiv.classList.toggle('collapsed');
+                groupDiv.appendChild(header);
 
-            grouped[folderName].forEach(fileObj => {
-                const div = document.createElement('div');
-                div.className = 'file-item';
-                div.id = `file-item-${fileObj.id}`;
+                const fileListDiv = document.createElement('div');
+                fileListDiv.className = 'file-list';
 
-                const matchData = matches ? matches.find(m => m.id === fileObj.id) : null;
+                let visibleCount = 0;
 
-                if (matches) {
-                    if (matchData) {
-                        const s = matchData.score;
+                grouped[folderName].forEach(fileObj => {
+                    const div = document.createElement('div');
+                    div.className = 'file-item';
+                    div.id = `file-item-${fileObj.id}`;
 
-                        // LOGIC UPDATE: Only color if score > -4
-                        if (s > -7) {
-                            visibleCount++;
-                            const styles = getGradientColor(s);
-                            div.style.color = styles.color;
-                            div.style.backgroundColor = styles.bg;
-                            div.style.borderLeft = `3px solid ${styles.color}`;
-                            div.innerHTML = `<span>${fileObj.name}</span><span class="match-score" style="background:${styles.color}; color:#000;">${s.toFixed(2)}</span>`;
+                    const matchData = matches ? matches.find(m => m.id === fileObj.id) : null;
+
+                    if (matches) {
+                        if (matchData) {
+                            const s = matchData.score;
+
+                            // LOGIC UPDATE: Only color if score > -4
+                            if (s > -7) {
+                                visibleCount++;
+                                const styles = getGradientColor(s);
+                                div.style.color = styles.color;
+                                div.style.backgroundColor = styles.bg;
+                                div.style.borderLeft = `3px solid ${styles.color}`;
+                                div.innerHTML = `<span>${fileObj.name}</span><span class="match-score" style="background:${styles.color}; color:#000;">${s.toFixed(2)}</span>`;
+                            } else {
+                                // Render as default/gray for low scores
+                                div.style.color = '#8b949e';
+                                div.style.backgroundColor = 'transparent';
+                                div.style.borderLeft = '3px solid transparent';
+                                div.innerHTML = `<span>${fileObj.name}</span><span class="match-score" style="background:#333; color:#aaa;">${s.toFixed(2)}</span>`;
+                            }
                         } else {
-                            // Render as default/gray for low scores
-                            div.style.color = '#8b949e';
-                            div.style.backgroundColor = 'transparent';
-                            div.style.borderLeft = '3px solid transparent';
-                            div.innerHTML = `<span>${fileObj.name}</span><span class="match-score" style="background:#333; color:#aaa;">${s.toFixed(2)}</span>`;
+                            div.style.display = 'none';
                         }
                     } else {
-                        div.style.display = 'none';
+                        div.innerHTML = `<span>${fileObj.name}</span>`;
                     }
-                } else {
-                    div.innerHTML = `<span>${fileObj.name}</span>`;
-                }
 
-                div.onclick = (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.file-item').forEach(el => {
-                        el.classList.remove('active');
-                        // Reset border for non-active items based on their score status
-                        const m = matches ? matches.find(x => x.id === parseInt(el.id.split('-')[2])) : null;
-                        if (matches && m && m.score > -4) {
-                            const st = getGradientColor(m.score);
-                            el.style.borderLeft = `3px solid ${st.color}`;
-                        } else {
-                            el.style.borderLeft = matches ? '3px solid transparent' : 'none';
-                        }
-                    });
+                    div.onclick = (e) => {
+                        e.stopPropagation();
+                        document.querySelectorAll('.file-item').forEach(el => {
+                            el.classList.remove('active');
+                            // Reset border for non-active items based on their score status
+                            const m = matches ? matches.find(x => x.id === parseInt(el.id.split('-')[2])) : null;
+                            if (matches && m && m.score > -4) {
+                                const st = getGradientColor(m.score);
+                                el.style.borderLeft = `3px solid ${st.color}`;
+                            } else {
+                                el.style.borderLeft = matches ? '3px solid transparent' : 'none';
+                            }
+                        });
 
-                    div.classList.add('active');
-                    div.style.borderLeft = '3px solid var(--accent-color)';
-                    loadFileContent(fileObj);
-                };
-                fileListDiv.appendChild(div);
+                        div.classList.add('active');
+                        div.style.borderLeft = '3px solid var(--accent-color)';
+                        loadFileContent(fileObj);
+                    };
+                    fileListDiv.appendChild(div);
+                });
+
+                groupDiv.appendChild(fileListDiv);
+                sidebar.appendChild(groupDiv);
             });
+        }
 
-            groupDiv.appendChild(fileListDiv);
-            sidebar.appendChild(groupDiv);
-        });
-    }
-
-    // Standard Helpers
-    function loadFileContent(fileObj) {
-        chatArea.innerHTML = '';
-        fileObj.chats.forEach((chat, i) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'conversation-wrapper';
-            let t = chat.title || `Conversation ${i+1}`;
-            wrapper.innerHTML = `<div class="conversation-header">${escapeHtml(t)}</div>`;
-            getMessages(chat).forEach(msg => {
-                const { thought, main } = getText(msg);
-                const role = msg.role || 'user';
-                let html = `<div class="message-row ${role==='user'?'user':'model'}"><div class="role-label">${role}</div>`;
-                if(thought) html+=`<details class="thought-block"><summary class="thought-summary">Thinking</summary><div class="thought-content content">${renderContent(thought)}</div></details>`;
-                if(main) html+=`<div class="content">${renderContent(main)}</div>`;
-                html+='</div>';
-                const temp = document.createElement('div');
-                temp.innerHTML = html;
-                wrapper.appendChild(temp.firstChild);
+        // Standard Helpers
+        function loadFileContent(fileObj) {
+            chatArea.innerHTML = '';
+            fileObj.chats.forEach((chat, i) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'conversation-wrapper';
+                let t = chat.title || `Conversation ${i + 1}`;
+                wrapper.innerHTML = `<div class="conversation-header">${escapeHtml(t)}</div>`;
+                getMessages(chat).forEach(msg => {
+                    const { thought, main } = getText(msg);
+                    const role = msg.role || 'user';
+                    let html = `<div class="message-row ${role === 'user' ? 'user' : 'model'}"><div class="role-label">${role}</div>`;
+                    if (thought) html += `<details class="thought-block"><summary class="thought-summary">Thinking</summary><div class="thought-content content">${renderContent(thought)}</div></details>`;
+                    if (main) html += `<div class="content">${renderContent(main)}</div>`;
+                    html += '</div>';
+                    const temp = document.createElement('div');
+                    temp.innerHTML = html;
+                    wrapper.appendChild(temp.firstChild);
+                });
+                chatArea.appendChild(wrapper);
             });
-            chatArea.appendChild(wrapper);
-        });
-        document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
-        renderMathInElement(chatArea, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}], throwOnError: false });
-    }
+            document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+            renderMathInElement(chatArea, { delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }], throwOnError: false });
+        }
 
-    function normalizeData(json) {
-        if (json.chunkedPrompt || json.runSettings) return [json];
-        if (Array.isArray(json)) return json;
-        if (json.conversations) return json.conversations;
-        if (json.history) return json.history;
-        return [];
-    }
-    function getMessages(chat) { return chat.messages || chat.history || (chat.chunkedPrompt ? chat.chunkedPrompt.chunks : []); }
-    function getText(msg) {
-        let thought='', main='';
-        if(msg.parts) msg.parts.forEach(p=>{ if(p.thought||p.isThought) thought+=(p.text||'')+'\n\n'; });
-        if(msg.parts && msg.parts.length>0) main=msg.parts.filter(p=>!p.thought&&!p.isThought).map(p=>p.text||'').join('');
-        else main = msg.text || msg.content || '';
-        return { thought: thought.trim(), main: main.trim() };
-    }
-    function renderContent(text) {
-        if(!text) return '';
-        text = text.replace(/```[\s\S]*?```/g, m => `\n${m}\n`); 
-        return marked.parse(text); 
-    }
-    function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : ''; }
-</script>
+        function normalizeData(json) {
+            if (json.chunkedPrompt || json.runSettings) return [json];
+            if (Array.isArray(json)) return json;
+            if (json.conversations) return json.conversations;
+            if (json.history) return json.history;
+            return [];
+        }
+        function getMessages(chat) { return chat.messages || chat.history || (chat.chunkedPrompt ? chat.chunkedPrompt.chunks : []); }
+        function getText(msg) {
+            let thought = '', main = '';
+            if (msg.parts) msg.parts.forEach(p => { if (p.thought || p.isThought) thought += (p.text || '') + '\n\n'; });
+            if (msg.parts && msg.parts.length > 0) main = msg.parts.filter(p => !p.thought && !p.isThought).map(p => p.text || '').join('');
+            else main = msg.text || msg.content || '';
+            return { thought: thought.trim(), main: main.trim() };
+        }
+        function renderContent(text) {
+            if (!text) return '';
+            text = text.replace(/```[\s\S]*?```/g, m => `\n${m}\n`);
+            return marked.parse(text);
+        }
+        function escapeHtml(text) { return text ? text.replace(/&/g, "&amp;").replace(/</g, "&lt;") : ''; }
+    </script>
 </body>
+
 </html>
