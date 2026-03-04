@@ -443,11 +443,23 @@
             try {
                 const startIdIndex = loadedFiles.length;
                 const filePromises = Array.from(files).map(async (file, idx) => {
+                    const dateObj = new Date(file.lastModified);
+                    const y = dateObj.getFullYear();
+                    const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    const d = String(dateObj.getDate()).padStart(2, '0');
+                    const dateStr = `${y}${m}${d}`;
+                    const prefix = dateStr + "_";
+
                     let folder = "Root";
                     if (file.webkitRelativePath) {
                         const parts = file.webkitRelativePath.split('/');
-                        if (parts.length > 1) folder = parts[parts.length - 2];
+                        if (parts.length > 1) {
+                            folder = parts[parts.length - 2];
+                        }
                     }
+
+                    const fileName = /^\d{8}_/.test(file.name) ? file.name : prefix + file.name;
+
                     try {
                         const text = await file.text();
                         const json = JSON.parse(text);
@@ -459,7 +471,7 @@
 
                         return {
                             id: startIdIndex + idx,
-                            name: file.name,
+                            name: fileName,
                             path: file.webkitRelativePath || file.name,
                             folder: folder,
                             chats: chats,
@@ -467,7 +479,7 @@
                             error: false
                         };
                     } catch (err) {
-                        return { id: startIdIndex + idx, name: file.name, folder: "Errors", error: true };
+                        return { id: startIdIndex + idx, name: fileName, folder: "Errors", error: true };
                     }
                 });
 
