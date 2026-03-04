@@ -30,11 +30,9 @@
 *(Placeholder: Upload a screenshot showing the main interface with loaded files and search results)*
 
 ### How to Export from Google AI Studio
-1. Open [Google AI Studio](https://aistudio.google.com/).
-2. Navigate to your "Prompt Gallery" or "Library".
-3. Use the export/download option to get your chat history in JSON format.
-![AI Studio Export Steps](./screenshots/export_steps.png)
-*(Placeholder: Upload a screenshot showing the export button/location in AI Studio)*
+1. Open [Google Drive](https://drive.google.com/), in "My Drive", click "Google AI Studio", you will see your chat history..
+2. click start item and then "shift click" the end item, you will select all the items in between.
+3. Click "download" icon to download.
 
 ---
 
