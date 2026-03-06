@@ -4,12 +4,50 @@
 
 ---
 
+## 📸 Screenshots
+
+### UI Overview
+![WheresIt UI Overview](./screenshots/ui_overview.png)
+
+---
+
 ## 🚀 Quick Start
 
-1. **Download**: Save [wheresit.html](file:///Volumes/data/dev/WheresIt/wheresit.html) to your computer.
-2. **Open**: Double-click the file to open it in any modern web browser.
-3. **Load**: Click **"Add Files"** or **"Add Folder"** to import your exported chat JSON files.
-4. **Search**: Type your query and click **"Find with AI"**.
+WheresIt is a single-file web application. You don't need to install anything—just open the HTML file in your browser and load your exported chat data.
+
+### 1. Data Preparation: Export from Google AI Studio
+
+Your chats are stored in Google Drive. To use them with WheresIt, you need to export them as JSON files.
+
+#### **Method A: Manual Download (Easiest)**
+1.  Go to [Google Drive](https://drive.google.com/) and navigate to the **"Google AI Studio"** folder in "My Drive".
+2.  Select the chats you want to search:
+    *   Click the first item, then **Shift+Click** the last item to select a range.
+    *   Or use **Cmd+A** (Mac) / **Ctrl+A** (Windows) to select all.
+3.  Right-click and select **"Download"**. 
+    *   *Note: Google Drive may zip multiple files together. If so, unzip the downloaded file on your computer before loading them into WheresIt.*
+
+#### **Method B: Automated Script (Advanced)**
+If you have the [gog cli](https://github.com/revv00/gog) installed and configured, you can use the provided script to sync your chats locally:
+```bash
+./scripts/fetch_ai_studio_chats.sh
+```
+This will download and date-prefix your chats into a local directory.
+
+### 2. Launching WheresIt
+
+1.  **Open the App**: Locate [wheresit.html](file:///Volumes/data/dev/WheresIt/wheresit.html) on your machine and double-click it to open in any modern browser (Chrome, Edge, Safari, Firefox).
+2.  **Import Data**:
+    *   **Add Files**: Select individual `.json` files.
+    *   **Add Folder**: Select an entire directory of chats. This is **highly recommended** as it preserves your folder hierarchy in the sidebar for better organization.
+3.  **Search with AI**:
+    *   Type a natural language query (e.g., *"How did I implement that React hook last week?"*).
+    *   Click **"Find with AI"**.
+    *   *First Run: The application will download the MiniLM semantic model (approx. 30MB) to your browser's local cache. This only happens once.*
+
+### 3. Understanding Results
+*   **Confidence Scores**: Each result shows a numerical score. Higher scores (closer to 0) indicate stronger semantic relevance.
+*   **Folder Navigator**: The sidebar groups conversations based on their local folder structure, making it easy to filter by project or date if you've organized your exports.
 
 ---
 
@@ -20,19 +58,6 @@
 - **Smart Grouping**: Automatically organizes your chats into folders based on your local directory structure.
 - **Rich Rendering**: Full support for Markdown, LaTeX (math equations), and syntax highlighting for code blocks.
 - **Visual Feedback**: Real-time progress bar during model download and scanning.
-
----
-
-## 📸 Screenshots
-
-### UI Overview
-![WheresIt UI Overview](./screenshots/ui_overview.png)
-*(Placeholder: Upload a screenshot showing the main interface with loaded files and search results)*
-
-### How to Export from Google AI Studio
-1. Open [Google Drive](https://drive.google.com/), in "My Drive", click "Google AI Studio", you will see your chat history..
-2. click start item and then "shift click" the end item, you will select all the items in between.
-3. Click "download" icon to download.
 
 ---
 
